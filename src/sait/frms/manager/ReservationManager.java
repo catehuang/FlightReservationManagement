@@ -33,12 +33,14 @@ public class ReservationManager {
 				// Citizenship, Cost, active
 				String generatedCode = generateReservationCode(flight);
 				System.out.println("Reservation created. Your code is " + generatedCode + ".");
-				
+
 				// Available seat - 1
-				flight = new Flight(flight.getCode(), flight.getAirlineName(), flight.getFrom(), flight.getTo(), flight.getWeekday(), flight.getTime(), this.getAvailableSeats(flight)-1, flight.getCostPerSeat());
+				flight = new Flight(flight.getCode(), flight.getAirlineName(), flight.getFrom(), flight.getTo(),
+						flight.getWeekday(), flight.getTime(), this.getAvailableSeats(flight) - 1,
+						flight.getCostPerSeat());
 				Reservation rsv = new Reservation(generatedCode, flight.getCode(), flight.getAirlineName(), name,
 						citizenship, flight.getCostPerSeat(), false);
-				
+
 				// write reservation info to binary file
 				reservations.add(rsv);
 				persist();
@@ -85,7 +87,7 @@ public class ReservationManager {
 				}
 			}
 		} catch (IOException e) {
-			System.out.println("End Of File");
+			//System.out.println("End Of File");
 		}
 
 		return findMatchReservation;
@@ -102,7 +104,7 @@ public class ReservationManager {
 				}
 			}
 		} catch (IOException e) {
-			System.out.println("End Of File");
+			//System.out.println("End Of File");
 		}
 		return null;
 	}
@@ -157,24 +159,34 @@ public class ReservationManager {
 	}
 
 	private void populateFromBinary() throws IOException {
-		boolean endOfFile = false;
-		while (!endOfFile) {
-			try {
-				for (int position = 0; position < raf.length(); position += RERSERVATION_BYTE_SIZE) {
-					raf.seek(position);
-					String generatedCodeBinary = raf.readUTF().trim();
-					String flightCodeBinary = raf.readUTF().trim();
-					String airLineBinary = raf.readUTF().trim();
-					String nameBinary = raf.readUTF().trim();
-					String citizenshipBinary = raf.readUTF().trim();
-					double costPerSeat = raf.readDouble();
-					reservations.add(new Reservation(generatedCodeBinary, flightCodeBinary, airLineBinary, nameBinary,
-							citizenshipBinary, costPerSeat, true));
-				}
-			} catch (Exception e) {
-				endOfFile = true;
+		DataInputStream in = null;
+		try {
+			in = new DataInputStream(new FileInputStream(RESERVATION_RECORDS));
+			boolean endOfFile = false;
+			
+			while (!endOfFile) {
+				String generatedCodeBinary = in.readUTF().trim();
+				String flightCodeBinary = in.readUTF().trim();
+				String airLineBinary = in.readUTF().trim();
+				String nameBinary = in.readUTF().trim();
+				String citizenshipBinary = in.readUTF().trim();
+				double costPerSeat = in.readDouble();
+				in.readBoolean(); // boolean part
+				reservations.add(new Reservation(generatedCodeBinary, flightCodeBinary, airLineBinary, nameBinary,
+						citizenshipBinary, costPerSeat, true));
 			}
-
+		} 
+		catch (FileNotFoundException e) {
+			// The reservation records haven't created and saved into a binary file.
+		}
+		catch (EOFException e) {
+			// endOfFile = true;
+			in.close();
+		}
+		
+		/* Print out reservations */
+		for (Reservation r: reservations) {
+			System.out.println(r);
 		}
 	}
 
