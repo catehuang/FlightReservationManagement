@@ -63,48 +63,23 @@ public class ReservationManager {
 	 * @return
 	 */
 	public ArrayList<Reservation> findReservations(String code, String airline, String name) throws IOException {
-		ArrayList<Reservation> findMatchReservation = new ArrayList<>();
-		Reservation reservationsRecord;
+		ArrayList<Reservation> findMatchReservation = new ArrayList<Reservation>();
 
-		try {
-			// read record to reservation object
-			for (int position = 0; position < raf.length(); position += RERSERVATION_BYTE_SIZE) {
-				raf.seek(position);
-				String generatedCodeBinary = raf.readUTF().trim();
-				String flightCodeBinary = raf.readUTF().trim();
-				String airLineBinary = raf.readUTF().trim();
-				String nameBinary = raf.readUTF().trim();
-				String citizenshipBinary = raf.readUTF().trim();
-				double costPerSeat = raf.readDouble();
-				boolean isActive = raf.readBoolean();
-				reservationsRecord = new Reservation(generatedCodeBinary, flightCodeBinary, airLineBinary, nameBinary,
-						citizenshipBinary, costPerSeat, isActive);
-
-				if (code.toUpperCase() == generatedCodeBinary.toUpperCase()
-						|| airline.toUpperCase() == airLineBinary.toUpperCase()
-						|| name.toUpperCase() == nameBinary.toUpperCase()) {
-					findMatchReservation.add(reservationsRecord);
-				}
+		for (Reservation r : reservations) {
+			if (r.getCode().equals(code.toUpperCase()) || r.getAirline().equals(airline.toUpperCase()) || r.getName().equals(name)) {
+				findMatchReservation.add(r);
+				//System.out.println(r);
 			}
-		} catch (IOException e) {
-			//System.out.println("End Of File");
 		}
-
 		return findMatchReservation;
 	}
 
 	public Reservation findReservationByCode(String code) {
-		try {
-			raf.seek(0);
-			for (long position = 0; position < this.raf.length(); position += RERSERVATION_BYTE_SIZE) {
-				if (this.raf.readUTF().trim().equals(code)) {
-					return new Reservation(this.raf.readUTF().trim(), this.raf.readUTF().trim(),
-							this.raf.readUTF().trim(), this.raf.readUTF().trim(), this.raf.readUTF().trim(),
-							this.raf.readDouble(), this.raf.readBoolean());
-				}
+		for (Reservation r : reservations) {
+			if (r.getCode().equals(code.toUpperCase())) {
+				return r;
+				//System.out.println(r);
 			}
-		} catch (IOException e) {
-			//System.out.println("End Of File");
 		}
 		return null;
 	}
@@ -184,10 +159,13 @@ public class ReservationManager {
 			in.close();
 		}
 		
-		/* Print out reservations */
+		/*
+		// Print out reservations
+		System.out.println("Populate reservation records from binary:");
 		for (Reservation r: reservations) {
 			System.out.println(r);
 		}
+		*/
 	}
 
 }
