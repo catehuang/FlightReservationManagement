@@ -1,5 +1,7 @@
 package sait.frms.problemdomain;
 
+import java.util.regex.Pattern;
+
 public class Flight {
 	private String code;
 	private String airlineName;
@@ -62,14 +64,22 @@ public class Flight {
 	}
 
 	public boolean isDomestic() {
-		
+		//Only the Canadian airports start with the letter Y
+		if (getFrom().charAt(0) == 'Y' && getTo().charAt(0) == 'Y') {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
 	private void parseCode(String code) {
 		
 	}
 	
+	@Override
 	public String toString() {
-		
+		return "Flight [code=" + code + ", airlineName=" + airlineName + ", from=" + from + ", to=" + to + ", weekday="
+				+ weekday + ", time=" + time + ", seats=" + seats + ", costPerSeat=" + costPerSeat + "]";
 	}
 }
