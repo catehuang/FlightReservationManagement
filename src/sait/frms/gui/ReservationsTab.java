@@ -2,11 +2,9 @@ package sait.frms.gui;
 
 import java.awt.*;
 import javax.swing.*;
-
-//import sait.frms.gui.FlightsTab.MyListSelectionListener;
-//import sait.frms.gui.FlightsTab.MyListSelectionListener;
-import sait.frms.manager.ReservationManager;
-import sait.frms.problemdomain.Reservation;
+import javax.swing.event.*;
+import sait.frms.manager.*;
+import sait.frms.problemdomain.*;
 
 /**
  * Holds the components for the reservations tab.
@@ -19,6 +17,15 @@ public class ReservationsTab extends TabBase {
 	private ReservationManager reservationManager;
 	
 	private JList<Reservation> reservationsList;
+	
+	private DefaultListModel<Reservation> reservationsModel;
+	
+	private String searchCode;
+	private String searchAirline;
+	private String searchName;
+	private String reserveName;
+	private String reserveCitizenship;
+	private String reserveStatus;
 	
 	private JPanel createSouthPanel() {
 		JPanel panel = new JPanel();
@@ -64,7 +71,6 @@ public class ReservationsTab extends TabBase {
 		gridbag.add(textName, c);
 		
 		panel.add(gridbag, BorderLayout.CENTER);
-		
 		panel.add(new JButton("Find Reservations"), BorderLayout.SOUTH);
 
 		return panel;
@@ -188,17 +194,6 @@ public class ReservationsTab extends TabBase {
 		
 	}
 	
-	private JPanel createCenterPanel() 
-	{
-		JPanel panel = new JPanel();
-		panel.setLayout(new BorderLayout());
-		panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 10));
-		panel.add(new JTextArea());
-
-		return panel;
-	}
-	
-	
 	/**
 	 * Creates the north panel.
 	 * @return JPanel that goes in north.
@@ -214,5 +209,112 @@ public class ReservationsTab extends TabBase {
 		return panel;
 	}
 	
+	private JPanel createCenterPanel() 
+	{
+		JPanel panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+		panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 10));
+		
+		reservationsModel = new DefaultListModel<>();
+		reservationsList = new JList<>(reservationsModel);
+		
+		// User can only select one item at a time.
+		reservationsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
+		// Wrap JList in JScrollPane so it is scrollable.
+		JScrollPane scrollPane = new JScrollPane(this.reservationsList);
+		
+		reservationsList.addListSelectionListener(new MyListSelectionListener());
+		
+		panel.add(scrollPane);
+		
+		return panel;
+		
+	}	
 	
+	
+	public ReservationManager getReservationManager() {
+		return reservationManager;
+	}
+
+	public void setReservationManager(ReservationManager reservationManager) {
+		this.reservationManager = reservationManager;
+	}
+
+	public JList<Reservation> getReservationsList() {
+		return reservationsList;
+	}
+
+	public void setReservationsList(JList<Reservation> reservationsList) {
+		this.reservationsList = reservationsList;
+	}
+
+	public DefaultListModel<Reservation> getReservationsModel() {
+		return reservationsModel;
+	}
+
+	public void setReservationsModel(DefaultListModel<Reservation> reservationsModel) {
+		this.reservationsModel = reservationsModel;
+	}
+
+	public String getSearchCode() {
+		return searchCode;
+	}
+
+	public void setSearchCode(String searchCode) {
+		this.searchCode = searchCode;
+	}
+
+	public String getSearchAirline() {
+		return searchAirline;
+	}
+
+	public void setSearchAirline(String searchAirline) {
+		this.searchAirline = searchAirline;
+	}
+
+	public String getSearchName() {
+		return searchName;
+	}
+
+	public void setSearchName(String searchName) {
+		this.searchName = searchName;
+	}
+
+	public String getReserveName() {
+		return reserveName;
+	}
+
+	public void setReserveName(String reserveName) {
+		this.reserveName = reserveName;
+	}
+
+	public String getReserveCitizenship() {
+		return reserveCitizenship;
+	}
+
+	public void setReserveCitizenship(String reserveCitizenship) {
+		this.reserveCitizenship = reserveCitizenship;
+	}
+
+	public String getReserveStatus() {
+		return reserveStatus;
+	}
+
+	public void setReserveStatus(String reserveStatus) {
+		this.reserveStatus = reserveStatus;
+	}
+
+
+	private class MyListSelectionListener implements ListSelectionListener 
+	{
+		/**
+		 * Called when user selects an item in the JList.
+		 */
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			
+		}
+		
+	}
 }

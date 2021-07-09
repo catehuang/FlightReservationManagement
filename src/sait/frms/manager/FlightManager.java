@@ -16,7 +16,7 @@ public class FlightManager {
 	static final String WEEKDAY_THURSDAY = "Thursday";
 	static final String WEEKDAY_FRIDAY = "Friday";
 	static final String WEEKDAY_SATURDAY = "Staturday";
-	
+
 	static final String AIRLINE_NAME_OA = "Otto Airlines";
 	static final String AIRLINE_NAME_CA = "Conned Air";
 	static final String AIRLINE_NAME_TB = "Try a Bus Airways";
@@ -124,9 +124,14 @@ public class FlightManager {
 		while (in.hasNext()) {
 			String[] fields = in.nextLine().split(",");
 			String code = fields[0];
-			String airport = fields[1];
 			airports.add(code);
-			airports.add(airport);
+			//String airport = fields[1];
+			//airports.add(airport);
 		}
+	}
+	
+	public String [] getDayArray() {
+		String [] day = {WEEKDAY_ANY, WEEKDAY_SUNDAY, WEEKDAY_MONDAY, WEEKDAY_TUESDAY, WEEKDAY_WEDNESDAY, WEEKDAY_THURSDAY, WEEKDAY_FRIDAY, WEEKDAY_SATURDAY};
+		return day;
 	}
 }

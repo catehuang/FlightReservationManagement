@@ -1,13 +1,15 @@
 package sait.frms.gui;
 
 import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
+import javax.swing.border.*;
 import javax.swing.event.*;
 
-import sait.frms.manager.FlightManager;
-import sait.frms.manager.ReservationManager;
-import sait.frms.problemdomain.Flight;
+import sait.frms.manager.*;
+import sait.frms.problemdomain.*;
 
 /**
  * Holds the components for the flights tab.
@@ -65,41 +67,53 @@ public class FlightsTab extends TabBase
 		JPanel gridbag = new JPanel();
 		gridbag.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
 		
 		JLabel labelFrom = new JLabel("From:");
+		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 0;
+		c.weightx = 0.05;
 		gridbag.add(labelFrom, c);
 		
-		JComboBox comboboxFrom = new JComboBox();
+		String[] array = flightManager.getAirports().toArray(new String[flightManager.getAirports().size()]);
+		JComboBox comboboxFrom = new JComboBox(array);
+		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
 		c.gridy = 0;
+		c.weightx = 0.95;
 		gridbag.add(comboboxFrom, c);
 		
 		JLabel labelTo = new JLabel("To:");
+		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 1;
+		c.weightx = 0.05;
 		gridbag.add(labelTo, c);
 		
-		JComboBox comboboxTo = new JComboBox();
+		JComboBox comboboxTo = new JComboBox(array);
+		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
 		c.gridy = 1;
+		c.weightx = 0.95;
 		gridbag.add(comboboxTo, c);
 		
 		JLabel labelDay = new JLabel("Day:");
+		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 2;
+		c.weightx = 0.05;
 		gridbag.add(labelDay, c);
 		
-		JComboBox comboboxDay = new JComboBox();
+		JComboBox comboboxDay = new JComboBox(flightManager.getDayArray());
+		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
 		c.gridy = 2;
+		c.weightx = 0.95;
 		gridbag.add(comboboxDay, c);
 		
 		panel.add(gridbag, BorderLayout.CENTER);
-		
-		panel.add(new JButton("Find Flights"), BorderLayout.SOUTH);
+		JButton findFlightsBT= new JButton("Find Flights");
+		panel.add(findFlightsBT, BorderLayout.SOUTH);
 		
 		return panel;
 	}
@@ -226,6 +240,7 @@ public class FlightsTab extends TabBase
 		panel.setLayout(new BorderLayout());
 		panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 10));
 		
+		
 		flightsModel = new DefaultListModel<>();
 		flightsList = new JList<>(flightsModel);
 		
@@ -241,6 +256,7 @@ public class FlightsTab extends TabBase
 		
 		return panel;
 	}
+	
 	
 	private class MyListSelectionListener implements ListSelectionListener 
 	{
