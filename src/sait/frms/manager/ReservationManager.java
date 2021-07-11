@@ -35,10 +35,10 @@ public class ReservationManager {
 				System.out.println("Reservation created. Your code is " + generatedCode + ".");
 
 				// Available seat - 1
-				flight = new Flight(flight.getCode(), flight.getAirlineName(), flight.getFrom(), flight.getTo(),
+				flight = new Flight(flight.getCode(), flight.getFrom(), flight.getTo(),
 						flight.getWeekday(), flight.getTime(), this.getAvailableSeats(flight) - 1,
 						flight.getCostPerSeat());
-				Reservation rsv = new Reservation(generatedCode, flight.getCode(), flight.getAirlineName(), name,
+				Reservation rsv = new Reservation(generatedCode, flight.getCode(), name,
 						citizenship, flight.getCostPerSeat(), false);
 
 				// write reservation info to binary file
@@ -142,12 +142,11 @@ public class ReservationManager {
 			while (!endOfFile) {
 				String generatedCodeBinary = in.readUTF().trim();
 				String flightCodeBinary = in.readUTF().trim();
-				String airLineBinary = in.readUTF().trim();
 				String nameBinary = in.readUTF().trim();
 				String citizenshipBinary = in.readUTF().trim();
 				double costPerSeat = in.readDouble();
 				in.readBoolean(); // boolean part
-				reservations.add(new Reservation(generatedCodeBinary, flightCodeBinary, airLineBinary, nameBinary,
+				reservations.add(new Reservation(generatedCodeBinary, flightCodeBinary, nameBinary,
 						citizenshipBinary, costPerSeat, true));
 			}
 		} 

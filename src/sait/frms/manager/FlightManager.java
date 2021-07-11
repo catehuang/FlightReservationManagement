@@ -17,19 +17,12 @@ public class FlightManager {
 	static final String WEEKDAY_FRIDAY = "Friday";
 	static final String WEEKDAY_SATURDAY = "Staturday";
 
-	static final String AIRLINE_NAME_OA = "Otto Airlines";
-	static final String AIRLINE_NAME_CA = "Conned Air";
-	static final String AIRLINE_NAME_TB = "Try a Bus Airways";
-	static final String AIRLINE_NAME_VA = "Vertical Airways";
-
 	private ArrayList<Flight> flights;
 	private ArrayList<String> airports;
-	private ArrayList<Flight> foundFlight;	// I need an arraylist to store found flights 
 	
 	public FlightManager() throws FileNotFoundException {
 		flights = new ArrayList<>();
 		airports = new ArrayList<>();
-		foundFlight = new ArrayList<>();	// I need an arraylist to store found flights 
 		populateFlights();
 		populateAirports();
 	}
@@ -74,10 +67,10 @@ public class FlightManager {
 		for (Flight f : flights) {
 			if (f.getFrom().equals(from) && f.getTo().equals(to)) {
 				if (weekday.equals(WEEKDAY_ANY)) {
-					foundFlights.add(new Flight(f.getCode(), f.getAirlineName(), f.getFrom(), f.getTo(), f.getWeekday(), f.getTime(), f.getSeats(), f.getCostPerSeat()));
+					foundFlights.add(new Flight(f.getCode(), f.getFrom(), f.getTo(), f.getWeekday(), f.getTime(), f.getSeats(), f.getCostPerSeat()));
 				}
 				else if (f.getWeekday().equals(weekday)){
-					foundFlights.add(new Flight(f.getCode(), f.getAirlineName(), f.getFrom(), f.getTo(), f.getWeekday(), f.getTime(), f.getSeats(), f.getCostPerSeat()));
+					foundFlights.add(new Flight(f.getCode(), f.getFrom(), f.getTo(), f.getWeekday(), f.getTime(), f.getSeats(), f.getCostPerSeat()));
 				}
 			}
 		}
@@ -89,33 +82,13 @@ public class FlightManager {
 		while (in.hasNext()) {
 			String[] fields = in.nextLine().split(",");
 			String code = fields[0];
-			
-			String airlineName = "";
-			switch(code.split("-")[0]) {
-			case "OA":
-				airlineName = AIRLINE_NAME_OA;
-				break;
-			case "CA":
-				airlineName = AIRLINE_NAME_CA;
-				break;
-			case "TB":
-				airlineName = AIRLINE_NAME_TB;
-				break;
-			case "VA":
-				airlineName = AIRLINE_NAME_VA;
-				break;
-			default:
-				// Invalid code
-				break;
-			}
-			
 			String from = fields[1];
 			String to = fields[2];
 			String weekday = fields[3];
 			String time = fields[4];
 			int seats = Integer.parseInt(fields[5]);
 			double costPerSeat = Double.parseDouble(fields[6]);
-			flights.add(new Flight(code, airlineName, from, to, weekday, time, seats, costPerSeat));
+			flights.add(new Flight(code, from, to, weekday, time, seats, costPerSeat));
 		}
 	}
 	
