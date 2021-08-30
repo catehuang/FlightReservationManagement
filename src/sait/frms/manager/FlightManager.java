@@ -82,13 +82,20 @@ public class FlightManager {
 		while (in.hasNext()) {
 			String[] fields = in.nextLine().split(",");
 			String code = fields[0];
-			String from = fields[1];
-			String to = fields[2];
-			String weekday = fields[3];
-			String time = fields[4];
-			int seats = Integer.parseInt(fields[5]);
-			double costPerSeat = Double.parseDouble(fields[6]);
-			flights.add(new Flight(code, from, to, weekday, time, seats, costPerSeat));
+			
+			/* Filtering possible airlines */
+			//String[] possibleFlights = {"OA", "CA", "TB", "VA"};
+			//for (String s : possibleFlights) {
+				//if (code.startsWith(s)) {
+					String from = fields[1];
+					String to = fields[2];
+					String weekday = fields[3];
+					String time = fields[4];
+					int seats = Integer.parseInt(fields[5]);
+					double costPerSeat = Double.parseDouble(fields[6]);
+					flights.add(new Flight(code, from, to, weekday, time, seats, costPerSeat));					
+				//}
+			//}
 		}
 	}
 	

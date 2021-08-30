@@ -1,8 +1,15 @@
 package sait.frms.gui;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import javax.swing.*;
 import javax.swing.event.*;
+
+import sait.frms.gui.ReservationsTab.*;
 import sait.frms.manager.*;
 import sait.frms.problemdomain.*;
 
@@ -15,63 +22,69 @@ public class ReservationsTab extends TabBase {
 	 * Instance of reservation manager.
 	 */
 	private ReservationManager reservationManager;
-	
-	private JList<Reservation> reservationsList;
-	
 	private DefaultListModel<Reservation> reservationsModel;
-	
-	private String searchCode;
-	private String searchAirline;
-	private String searchName;
-	private String reserveName;
-	private String reserveCitizenship;
-	private String reserveStatus;
-	
+	private JList<Reservation> reservationsList;
+	ArrayList<Reservation> reservationsRecord = new ArrayList<>();
+	ArrayList<Flight> flights = new ArrayList<>();
+	Reservation reservationTempRecord = null;
+	TextField textCode;
+	TextField textAirline;
+	TextField textName;
+	TextField textFlight;
+	TextField textCost;
+	TextField textCitizenship;
+	TextField searchTextCode;
+	TextField searchTextAirline;
+	TextField searchTextName;
+	JComboBox<String> textStatus;
+
 	private JPanel createSouthPanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
-		
+
 		JLabel labelTitle = new JLabel("Search", SwingConstants.CENTER);
 		labelTitle.setFont(new Font("serif", Font.PLAIN, 29));
 		panel.add(labelTitle, BorderLayout.NORTH);
-		
+
 		JPanel gridbag = new JPanel();
 		gridbag.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
-		
-		JLabel labelCode = new JLabel("Code:");
+
+		JLabel searchLabelCode = new JLabel("Code:");
 		c.gridx = 0;
 		c.gridy = 0;
-		gridbag.add(labelCode, c);
-		
-		JTextField textCode = new JTextField(50);
+		gridbag.add(searchLabelCode, c);
+
+		searchTextCode = new TextField(50);
 		c.gridx = 1;
 		c.gridy = 0;
-		gridbag.add(textCode, c);
-		
-		JLabel labelAirline = new JLabel("Airline:");
+		gridbag.add(searchTextCode, c);
+
+		JLabel searchLabelAirline = new JLabel("Airline:");
 		c.gridx = 0;
 		c.gridy = 1;
-		gridbag.add(labelAirline, c);
-		
-		JTextField textAirline = new JTextField(50);
+		gridbag.add(searchLabelAirline, c);
+
+		searchTextAirline = new TextField(50);
 		c.gridx = 1;
 		c.gridy = 1;
-		gridbag.add(textAirline, c);
-		
-		JLabel labelName = new JLabel("Name:");
+		gridbag.add(searchTextAirline, c);
+
+		JLabel searchLabelName = new JLabel("Name:");
 		c.gridx = 0;
 		c.gridy = 2;
-		gridbag.add(labelName, c);
-		
-		JTextField textName = new JTextField(50);
+		gridbag.add(searchLabelName, c);
+
+		searchTextName = new TextField(50);
 		c.gridx = 1;
 		c.gridy = 2;
-		gridbag.add(textName, c);
-		
+		gridbag.add(searchTextName, c);
+
 		panel.add(gridbag, BorderLayout.CENTER);
-		panel.add(new JButton("Find Reservations"), BorderLayout.SOUTH);
+		JButton findReservationBT = new JButton("Find Reservations");
+		panel.add(findReservationBT, BorderLayout.SOUTH);
+		findReservationBT.addActionListener(new ButtonListener());
 
 		return panel;
 	}
@@ -80,241 +93,261 @@ public class ReservationsTab extends TabBase {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
 		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 0));
-		
+
 		JLabel labelTitle = new JLabel("Reserve", SwingConstants.CENTER);
 		labelTitle.setFont(new Font("serif", Font.PLAIN, 29));
 		panel.add(labelTitle, BorderLayout.NORTH);
-		
+
 		JPanel gridbag = new JPanel();
 		gridbag.setLayout(new GridBagLayout());
 		gridbag.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 0));
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
-		
+
 		JLabel labelCode = new JLabel("Code:", SwingConstants.RIGHT);
 		c.gridx = 0;
 		c.gridy = 0;
 		gridbag.add(labelCode, c);
-		
-		TextField textFlight = new TextField(10);
-		textFlight.setEditable(false);
+
+		textCode = new TextField(10);
+		textCode.setEditable(false);
 		c.gridx = 1;
 		c.gridy = 0;
-		gridbag.add(textFlight, c);
-		
+		gridbag.add(textCode, c);
+
 		JLabel labelFlight = new JLabel("Flight:", SwingConstants.RIGHT);
 		c.gridx = 0;
 		c.gridy = 1;
 		gridbag.add(labelFlight, c);
-		
-		TextField textAirline = new TextField(10);
-		textAirline.setEditable(false);
+
+		textFlight = new TextField(10);
+		textFlight.setEditable(false);
 		c.gridx = 1;
 		c.gridy = 1;
-		gridbag.add(textAirline, c);
-		
+		gridbag.add(textFlight, c);
+
 		JLabel labelAirline = new JLabel("Airline:", SwingConstants.RIGHT);
 		c.gridx = 0;
 		c.gridy = 2;
 		gridbag.add(labelAirline, c);
-		
-		TextField textDay = new TextField(10);
-		textDay.setEditable(false);
+
+		textAirline = new TextField(10);
+		textAirline.setEditable(false);
 		c.gridx = 1;
 		c.gridy = 2;
-		gridbag.add(textDay, c);
-		
+		gridbag.add(textAirline, c);
+
 		JLabel labelCost = new JLabel("Cost:", SwingConstants.RIGHT);
 		c.gridx = 0;
 		c.gridy = 3;
 		gridbag.add(labelCost, c);
-		
-		TextField textTime = new TextField(10);
-		textTime.setEditable(false);
+
+		textCost = new TextField(10);
+		textCost.setEditable(false);
 		c.gridx = 1;
 		c.gridy = 3;
-		gridbag.add(textTime, c);
+		gridbag.add(textCost, c);
 
 		JLabel labelName = new JLabel("Name:", SwingConstants.RIGHT);
 		c.gridx = 0;
 		c.gridy = 4;
 		gridbag.add(labelName, c);
-		
-		TextField textCost = new TextField(10);
+
+		textName = new TextField(10);
 		c.gridx = 1;
 		c.gridy = 4;
-		gridbag.add(textCost, c);
-		
+		gridbag.add(textName, c);
+
 		JLabel labelCitizenship = new JLabel("Citizenship:", SwingConstants.RIGHT);
 		c.gridx = 0;
 		c.gridy = 5;
 		gridbag.add(labelCitizenship, c);
-		
-		TextField textName = new TextField(10);
+
+		textCitizenship = new TextField(10);
 		c.gridx = 1;
 		c.gridy = 5;
-		gridbag.add(textName, c);
-		
-		JLabel labelStatus= new JLabel("Status:", SwingConstants.RIGHT);
+		gridbag.add(textCitizenship, c);
+
+		JLabel labelStatus = new JLabel("Status:", SwingConstants.RIGHT);
 		c.gridx = 0;
 		c.gridy = 6;
 		gridbag.add(labelStatus, c);
-		
-		JComboBox textStatus = new JComboBox();
+
+		textStatus = new JComboBox<>();
+		textStatus.insertItemAt("Active", 0);
+		textStatus.insertItemAt("Inactive", 1);
 		c.gridx = 1;
 		c.gridy = 6;
 		gridbag.add(textStatus, c);
-		
-		panel.add(gridbag, BorderLayout.CENTER);
-		
-		panel.add(new JButton("Update"), BorderLayout.SOUTH);
 
+		panel.add(gridbag, BorderLayout.CENTER);
+		JButton updateBT = new JButton("Update");
+		panel.add(updateBT, BorderLayout.SOUTH);
+		updateBT.addActionListener(new UpdateButtonListener());
 		return panel;
 	}
-	
-	
+
 	/**
 	 * Creates the components for reservations tab.
 	 */
 	public ReservationsTab(ReservationManager reservationManager) {
 		this.reservationManager = reservationManager;
 		panel.setLayout(new BorderLayout());
-		
+
 		JPanel northPanel = createNorthPanel();
 		panel.add(northPanel, BorderLayout.NORTH);
-		
+
 		JPanel centerPanel = createCenterPanel();
 		panel.add(centerPanel, BorderLayout.CENTER);
-		
+
 		JPanel southPanel = createSouthPanel();
 		panel.add(southPanel, BorderLayout.SOUTH);
-		
+
 		JPanel eastPanel = createEastPanel();
 		panel.add(eastPanel, BorderLayout.EAST);
-		
+
 	}
-	
+
 	/**
 	 * Creates the north panel.
+	 * 
 	 * @return JPanel that goes in north.
 	 */
-	private JPanel createNorthPanel() 
-	{
+	private JPanel createNorthPanel() {
 		JPanel panel = new JPanel();
-		
+
 		JLabel title = new JLabel("Reservations", SwingConstants.CENTER);
 		title.setFont(new Font("serif", Font.PLAIN, 29));
 		panel.add(title);
-		
+
 		return panel;
 	}
-	
-	private JPanel createCenterPanel() 
-	{
+
+	private JPanel createCenterPanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
 		panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 10));
-		
+
 		reservationsModel = new DefaultListModel<>();
 		reservationsList = new JList<>(reservationsModel);
-		
-		// User can only select one item at a time.
-		reservationsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
-		// Wrap JList in JScrollPane so it is scrollable.
-		JScrollPane scrollPane = new JScrollPane(this.reservationsList);
-		
+		reservationsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);// User can only select one item at a
+		// time.
+		JScrollPane scrollPane = new JScrollPane(this.reservationsList);// Wrap JList in JScrollPane so it is
+																		// scrollable.
 		reservationsList.addListSelectionListener(new MyListSelectionListener());
-		
 		panel.add(scrollPane);
-		
 		return panel;
-		
-	}	
-	
-	
-	public ReservationManager getReservationManager() {
-		return reservationManager;
+
 	}
 
-	public void setReservationManager(ReservationManager reservationManager) {
-		this.reservationManager = reservationManager;
-	}
-
-	public JList<Reservation> getReservationsList() {
-		return reservationsList;
-	}
-
-	public void setReservationsList(JList<Reservation> reservationsList) {
-		this.reservationsList = reservationsList;
-	}
-
-	public DefaultListModel<Reservation> getReservationsModel() {
-		return reservationsModel;
-	}
-
-	public void setReservationsModel(DefaultListModel<Reservation> reservationsModel) {
-		this.reservationsModel = reservationsModel;
-	}
-
-	public String getSearchCode() {
-		return searchCode;
-	}
-
-	public void setSearchCode(String searchCode) {
-		this.searchCode = searchCode;
-	}
-
-	public String getSearchAirline() {
-		return searchAirline;
-	}
-
-	public void setSearchAirline(String searchAirline) {
-		this.searchAirline = searchAirline;
-	}
-
-	public String getSearchName() {
-		return searchName;
-	}
-
-	public void setSearchName(String searchName) {
-		this.searchName = searchName;
-	}
-
-	public String getReserveName() {
-		return reserveName;
-	}
-
-	public void setReserveName(String reserveName) {
-		this.reserveName = reserveName;
-	}
-
-	public String getReserveCitizenship() {
-		return reserveCitizenship;
-	}
-
-	public void setReserveCitizenship(String reserveCitizenship) {
-		this.reserveCitizenship = reserveCitizenship;
-	}
-
-	public String getReserveStatus() {
-		return reserveStatus;
-	}
-
-	public void setReserveStatus(String reserveStatus) {
-		this.reserveStatus = reserveStatus;
-	}
-
-
-	private class MyListSelectionListener implements ListSelectionListener 
-	{
+	private class MyListSelectionListener implements ListSelectionListener {
 		/**
 		 * Called when user selects an item in the JList.
 		 */
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
-			
+			textCode.setText(reservationsList.getSelectedValue().getCode());
+			textFlight.setText(reservationsList.getSelectedValue().getFlightCode());
+			textAirline.setText(reservationsList.getSelectedValue().getAirline());
+			textCost.setText("$" + reservationsList.getSelectedValue().getCost());
+			textName.setText(reservationsList.getSelectedValue().getName());
+			textCitizenship.setText(reservationsList.getSelectedValue().getCitizenship());
+			if (reservationsList.getSelectedValue().isActive() == true) {
+				textStatus.setSelectedItem("Active");
+
+			} else {
+				textStatus.setSelectedItem("Inactive");
+			}
+
 		}
-		
+
+	}
+
+	private class ButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// clear fields
+			textCode.setText("");
+			textFlight.setText("");
+			textAirline.setText("");
+			textCost.setText("");
+			textName.setText("");
+			textCitizenship.setText("");
+			textStatus.setSelectedItem(null);;
+			
+			String searchCode = searchTextCode.getText().toUpperCase();
+			String searchAirline = searchTextAirline.getText().toUpperCase();
+			String searchName = searchTextName.getText().toUpperCase();
+			reservationsModel.clear();
+
+			// There are existed methods - findReservationByCode and findReservations
+			if (searchAirline.isEmpty() && searchName.isEmpty()) { // search by code
+				reservationsRecord.add(reservationManager.findReservationByCode(searchCode));
+				if (reservationsRecord == null) {
+					JOptionPane.showMessageDialog(null, "No matched results. Please enter again");
+				}
+			} else {
+				try {
+					reservationsRecord
+							.addAll(reservationManager.findReservations(searchCode, searchAirline, searchName));
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+
+			for (Reservation r : reservationsRecord) {
+				reservationsModel.addElement(r);
+				//System.out.println(r);
+			}
+		}
+	}
+
+	private class UpdateButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String name = textName.getText().toUpperCase();
+			String citizenship = textCitizenship.getText().toUpperCase();
+			Reservation target;
+
+			if (!name.isEmpty() && !citizenship.isEmpty()) {
+				target = reservationManager.findReservationByCode(textCode.getText().toUpperCase());
+				target.setName(name);
+				target.setCitizenship(citizenship);
+
+				if (textStatus.getSelectedItem().equals("Active")) {
+					target.setActive(true);
+				} else {
+					// inactive as a soft delete,
+					// the cancelled reservation will not be included in the number of seats used on
+					// a flight
+					target.setActive(false);
+					for (Flight f : flights) {
+						if (f.getCode().toUpperCase().equals(textFlight.getText().toUpperCase())) {
+							f = new Flight(f.getCode(), f.getFrom(), f.getTo(), f.getWeekday(), f.getTime(),
+									f.getSeats() + 1, f.getCostPerSeat());
+
+						}
+					}
+				}
+				try {
+					// update reservation record to binary file
+					reservationManager.persist();
+					System.out.println("Updated Successfully!");
+					JOptionPane.showMessageDialog(null, "Updated Successfully!");
+					
+					// clear fields
+					reservationsList.removeAll();
+
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			} else {
+				JOptionPane.showMessageDialog(null, "Name and Citizenship can not be empty, Please enter again");
+			}
+
+		}
+
 	}
 }

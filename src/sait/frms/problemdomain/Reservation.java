@@ -8,10 +8,13 @@ public class Reservation {
 	private String citizenship;
 	private double cost;
 	private boolean active;
+	static final String AIRLINE_NAME_OA = "Otto Airlines";
+	static final String AIRLINE_NAME_CA = "Conned Air";
+	static final String AIRLINE_NAME_TB = "Try a Bus Airways";
+	static final String AIRLINE_NAME_VA = "Vertical Airways";
 	
 	public Reservation() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public Reservation(String code, String flightCode, String name, String citizenship, double cost,
@@ -23,10 +26,11 @@ public class Reservation {
 		this.citizenship = citizenship;
 		this.cost = cost;
 		this.active = active;
+		this.airline = getAirline();
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public void setName(String name) {
@@ -34,7 +38,7 @@ public class Reservation {
 	}
 
 	public String getCitizenship() {
-		return citizenship;
+		return this.citizenship;
 	}
 
 	public void setCitizenship(String citizenship) {
@@ -42,33 +46,53 @@ public class Reservation {
 	}
 
 	public boolean isActive() {
-		return active;
+		return this.active;
 	}
 
 	public void setActive(boolean active) {
 		this.active = active;
 	}
 
+	/**
+	 * Get reservation code
+	 * @return reservation code
+	 */
 	public String getCode() {
-		return code;
+		return this.code;
 	}
 
 	public String getFlightCode() {
-		return flightCode;
+		return this.flightCode;
 	}
 
 	public String getAirline() {
-		return airline;
+		return parseCode(this.code);
 	}
+	
+	private String parseCode(String code) {
+		switch(this.flightCode.split("-")[0]) {
+		case "OA":
+			return AIRLINE_NAME_OA;
+		case "CA":
+			return AIRLINE_NAME_CA;
+		case "TB":
+			return AIRLINE_NAME_TB;
 
+		case "VA":
+			return AIRLINE_NAME_VA;
+		default:
+			return null;
+		}
+	}
+	
 	public double getCost() {
-		return cost;
+		return this.cost;
 	}
 
 	@Override
 	public String toString() {
-		return "Reservation [code=" + code + ", flightCode=" + flightCode + ", airline=" + airline + ", name=" + name
-				+ ", citizenship=" + citizenship + ", cost=" + cost + ", isActive=" + active + "]";
+		return "Reservation Code=" + this.code + ", FlightCode=" + this.flightCode + ", Airline=" + this.airline + ", name=" + this.name
+				+ ", Citizenship=" + this.citizenship + ", Cost=" + String.format("%-6.2f", this.cost) + ", isActive=" + this.active;
 	}
 	
 }

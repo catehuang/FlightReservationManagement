@@ -4,7 +4,7 @@ package sait.frms.gui;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.FileNotFoundException;
+import java.io.*;
 
 import javax.swing.*;
 import sait.frms.manager.*;
