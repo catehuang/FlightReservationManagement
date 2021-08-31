@@ -66,7 +66,7 @@ public class Reservation {
 	}
 
 	public String getAirline() {
-		return parseCode(this.code);
+		return parseCode(getFlightCode());
 	}
 	
 	private String parseCode(String code) {
@@ -91,8 +91,11 @@ public class Reservation {
 
 	@Override
 	public String toString() {
+		/*
 		return "Reservation Code=" + this.code + ", FlightCode=" + this.flightCode + ", Airline=" + this.airline + ", name=" + this.name
 				+ ", Citizenship=" + this.citizenship + ", Cost=" + String.format("%-6.2f", this.cost) + ", isActive=" + this.active;
+		*/
+		return this.code;
 	}
 	
 }

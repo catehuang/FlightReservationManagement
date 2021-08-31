@@ -24,7 +24,7 @@ public class ReservationsTab extends TabBase {
 	private ReservationManager reservationManager;
 	private DefaultListModel<Reservation> reservationsModel;
 	private JList<Reservation> reservationsList;
-	ArrayList<Reservation> reservationsRecord = new ArrayList<>();
+	ArrayList<Reservation> reservationsRecord;
 	ArrayList<Flight> flights = new ArrayList<>();
 	Reservation reservationTempRecord = null;
 	TextField textCode;
@@ -41,6 +41,7 @@ public class ReservationsTab extends TabBase {
 	private JPanel createSouthPanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
+		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
 		JLabel labelTitle = new JLabel("Search", SwingConstants.CENTER);
 		labelTitle.setFont(new Font("serif", Font.PLAIN, 29));
@@ -54,31 +55,37 @@ public class ReservationsTab extends TabBase {
 		JLabel searchLabelCode = new JLabel("Code:");
 		c.gridx = 0;
 		c.gridy = 0;
+		c.weightx = 0.05;
 		gridbag.add(searchLabelCode, c);
 
-		searchTextCode = new TextField(50);
+		searchTextCode = new TextField();
 		c.gridx = 1;
 		c.gridy = 0;
+		c.weightx = 0.95;
 		gridbag.add(searchTextCode, c);
 
 		JLabel searchLabelAirline = new JLabel("Airline:");
 		c.gridx = 0;
 		c.gridy = 1;
+		c.weightx = 0.05;
 		gridbag.add(searchLabelAirline, c);
 
-		searchTextAirline = new TextField(50);
+		searchTextAirline = new TextField();
 		c.gridx = 1;
 		c.gridy = 1;
+		c.weightx = 0.95;
 		gridbag.add(searchTextAirline, c);
 
 		JLabel searchLabelName = new JLabel("Name:");
 		c.gridx = 0;
 		c.gridy = 2;
+		c.weightx = 0.05;
 		gridbag.add(searchLabelName, c);
 
-		searchTextName = new TextField(50);
+		searchTextName = new TextField();
 		c.gridx = 1;
 		c.gridy = 2;
+		c.weightx = 0.95;
 		gridbag.add(searchTextName, c);
 
 		panel.add(gridbag, BorderLayout.CENTER);
@@ -92,7 +99,7 @@ public class ReservationsTab extends TabBase {
 	private JPanel createEastPanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
-		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 0));
+		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
 		JLabel labelTitle = new JLabel("Reserve", SwingConstants.CENTER);
 		labelTitle.setFont(new Font("serif", Font.PLAIN, 29));
@@ -100,7 +107,7 @@ public class ReservationsTab extends TabBase {
 
 		JPanel gridbag = new JPanel();
 		gridbag.setLayout(new GridBagLayout());
-		gridbag.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 0));
+		gridbag.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
 
@@ -171,6 +178,7 @@ public class ReservationsTab extends TabBase {
 		JLabel labelStatus = new JLabel("Status:", SwingConstants.RIGHT);
 		c.gridx = 0;
 		c.gridy = 6;
+		c.weightx = 0.1;
 		gridbag.add(labelStatus, c);
 
 		textStatus = new JComboBox<>();
@@ -226,18 +234,16 @@ public class ReservationsTab extends TabBase {
 	private JPanel createCenterPanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
-		panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 10));
+		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
 		reservationsModel = new DefaultListModel<>();
 		reservationsList = new JList<>(reservationsModel);
-		reservationsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);// User can only select one item at a
-		// time.
-		JScrollPane scrollPane = new JScrollPane(this.reservationsList);// Wrap JList in JScrollPane so it is
-																		// scrollable.
+		reservationsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);// User can only select one item at a time
+		JScrollPane scrollPane = new JScrollPane(this.reservationsList);// Wrap JList in JScrollPane so it is scrollable.
 		reservationsList.addListSelectionListener(new MyListSelectionListener());
+		
 		panel.add(scrollPane);
 		return panel;
-
 	}
 
 	private class MyListSelectionListener implements ListSelectionListener {
@@ -246,21 +252,21 @@ public class ReservationsTab extends TabBase {
 		 */
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
-			textCode.setText(reservationsList.getSelectedValue().getCode());
-			textFlight.setText(reservationsList.getSelectedValue().getFlightCode());
-			textAirline.setText(reservationsList.getSelectedValue().getAirline());
-			textCost.setText("$" + reservationsList.getSelectedValue().getCost());
-			textName.setText(reservationsList.getSelectedValue().getName());
-			textCitizenship.setText(reservationsList.getSelectedValue().getCitizenship());
-			if (reservationsList.getSelectedValue().isActive() == true) {
-				textStatus.setSelectedItem("Active");
-
-			} else {
-				textStatus.setSelectedItem("Inactive");
+			if (reservationsList.getSelectedValue() != null) {
+				textCode.setText(reservationsList.getSelectedValue().getCode());
+				textFlight.setText(reservationsList.getSelectedValue().getFlightCode());
+				textAirline.setText(reservationsList.getSelectedValue().getAirline());
+				textCost.setText("$" + reservationsList.getSelectedValue().getCost());
+				textName.setText(reservationsList.getSelectedValue().getName());
+				textCitizenship.setText(reservationsList.getSelectedValue().getCitizenship());	
+				
+				if (reservationsList.getSelectedValue().isActive() == true) {
+					textStatus.setSelectedItem("Active");
+				} else {
+					textStatus.setSelectedItem("Inactive");
+				}				
 			}
-
 		}
-
 	}
 
 	private class ButtonListener implements ActionListener {
@@ -268,37 +274,58 @@ public class ReservationsTab extends TabBase {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// clear fields
+			reservationsRecord = new ArrayList<>();
+			Reservation tmp = null;
+			ArrayList<Reservation> tmplist = new ArrayList<>();
 			textCode.setText("");
 			textFlight.setText("");
 			textAirline.setText("");
 			textCost.setText("");
 			textName.setText("");
 			textCitizenship.setText("");
-			textStatus.setSelectedItem(null);;
-			
+			textStatus.setSelectedItem(null);
+			reservationsModel.clear();
+
 			String searchCode = searchTextCode.getText().toUpperCase();
 			String searchAirline = searchTextAirline.getText().toUpperCase();
 			String searchName = searchTextName.getText().toUpperCase();
-			reservationsModel.clear();
 
 			// There are existed methods - findReservationByCode and findReservations
-			if (searchAirline.isEmpty() && searchName.isEmpty()) { // search by code
-				reservationsRecord.add(reservationManager.findReservationByCode(searchCode));
-				if (reservationsRecord == null) {
-					JOptionPane.showMessageDialog(null, "No matched results. Please enter again");
-				}
+			if (searchCode.length() == 0 && searchAirline.length() == 0 && searchName.length() == 0) {
+				// Three search items are empty
+				// System.out.println("Case 1 - All empty");
+				JOptionPane.showMessageDialog(null, "Please enter at least one searching information");
 			} else {
-				try {
-					reservationsRecord
-							.addAll(reservationManager.findReservations(searchCode, searchAirline, searchName));
-				} catch (IOException e1) {
-					e1.printStackTrace();
+				// search by code
+				if (searchAirline.isEmpty() && searchName.isEmpty()) {
+					tmp = reservationManager.findReservationByCode(searchCode);
+					if (tmp == null) {
+						// System.out.println("Case 2 - Code was incorrectly (Airline & Name were
+						// empty)");
+						JOptionPane.showMessageDialog(null, "No matched results. Please check input code.");
+					} else {
+						// System.out.println("Case 3 - Code was correctly (Airline & Name were
+						// empty)");
+						reservationsRecord.add(tmp);
+					}
+				} else {
+					// search by code, airline and name
+					tmplist = reservationManager.findReservations(searchCode, searchAirline, searchName);
+					if (tmplist.size() == 0) {
+						// System.out.println("Case 4 - Information incorrect. Searched by Code,
+						// Airline, and Name");
+						JOptionPane.showMessageDialog(null, "No matched results. Please check input information.");
+					} else {
+						reservationsRecord.addAll(tmplist);
+						// System.out.println("Case 5 - Information correct. Searched by Code, Airline,
+						// and Name");
+					}
 				}
 			}
 
 			for (Reservation r : reservationsRecord) {
 				reservationsModel.addElement(r);
-				//System.out.println(r);
+				// System.out.println(r);
 			}
 		}
 	}
@@ -320,8 +347,7 @@ public class ReservationsTab extends TabBase {
 					target.setActive(true);
 				} else {
 					// inactive as a soft delete,
-					// the cancelled reservation will not be included in the number of seats used on
-					// a flight
+					// the cancelled reservation will not be included in the number of seats used on a flight
 					target.setActive(false);
 					for (Flight f : flights) {
 						if (f.getCode().toUpperCase().equals(textFlight.getText().toUpperCase())) {
@@ -336,7 +362,7 @@ public class ReservationsTab extends TabBase {
 					reservationManager.persist();
 					System.out.println("Updated Successfully!");
 					JOptionPane.showMessageDialog(null, "Updated Successfully!");
-					
+
 					// clear fields
 					reservationsList.removeAll();
 

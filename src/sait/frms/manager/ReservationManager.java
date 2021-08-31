@@ -70,11 +70,11 @@ public class ReservationManager {
 	 * @param name customer's name
 	 * @return found all reservation records
 	 */
-	public ArrayList<Reservation> findReservations(String code, String airline, String name) throws IOException {
+	public ArrayList<Reservation> findReservations(String code, String airline, String name) {
 		ArrayList<Reservation> findMatchReservation = new ArrayList<Reservation>();
 
 		for (Reservation r : reservations) {
-			if (r.getCode().equals(code.toUpperCase()) || r.getAirline().equals(airline.toUpperCase()) || r.getName().equals(name.toUpperCase())) {
+			if (r.getCode().toUpperCase().equals(code) || r.getAirline().toUpperCase().equals(airline) || r.getName().toUpperCase().equals(name)) {
 				findMatchReservation.add(r);
 				//System.out.println(r);
 			}
@@ -102,6 +102,8 @@ public class ReservationManager {
 	 * @throws IOException if the file cannot be written
 	 */
 	public void persist() throws IOException {
+		System.out.println("Write data into csv file...");
+		raf.seek(0);	// move file pointer to 0
 		for (int i = 0; i < reservations.size(); i++) {
 			String generatedCodeBinary = String.format("%-5s", reservations.get(i).getCode()); // LDDDD (i.e.: I1234) 7 bytes
 																								
@@ -183,11 +185,12 @@ public class ReservationManager {
 		
 		
 		// Print out reservations
-		System.out.println("Populate reservation records from binary:");
+		System.out.println("Populate reservation records from binary (" + reservations.size() + "):");
 		for (Reservation r: reservations) {
-			System.out.println(r);
+			//System.out.println(r);
+			System.out.println("Reservation Code=" + r.getCode() + ", FlightCode=" + r.getFlightCode() + ", Airline=" + r.getAirline() + 
+								", name=" + r.getName() + ", Citizenship=" + r.getCitizenship() + ", Cost=" + 
+								String.format("%-6.2f", r.getCost()) + ", isActive=" + r.isActive());
 		}
-		
 	}
-
 }

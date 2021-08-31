@@ -76,6 +76,7 @@ public class FlightsTab extends TabBase {
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
+		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
 		JLabel labelTitle = new JLabel("Flight Finder", SwingConstants.CENTER);
 		labelTitle.setFont(new Font("serif", Font.PLAIN, 29));
@@ -146,7 +147,7 @@ public class FlightsTab extends TabBase {
 	private JPanel createEastPanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
-		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 0));
+		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
 		JLabel labelTitle = new JLabel("Reserve", SwingConstants.CENTER);
 		labelTitle.setFont(new Font("serif", Font.PLAIN, 29));
@@ -154,7 +155,7 @@ public class FlightsTab extends TabBase {
 
 		JPanel gridbag = new JPanel();
 		gridbag.setLayout(new GridBagLayout());
-		gridbag.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 0));
+		gridbag.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
 
@@ -264,7 +265,7 @@ public class FlightsTab extends TabBase {
 	private JPanel createCenterPanel() {
 		textArea = new JPanel();
 		textArea.setLayout(new BorderLayout());
-		textArea.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 10));
+		textArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
 		flightsModel = new DefaultListModel<>();
 		flightsList = new JList<>(flightsModel);
